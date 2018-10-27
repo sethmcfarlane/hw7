@@ -1,0 +1,148 @@
+<html>
+<head>
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <script src="p5.sound.min.js"></script>
+    <style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<meta charset="utf-8" />
+</head>
+<body>
+    <script>
+
+    var balls = [];
+    var press = 0;
+    var mousePos = [];
+    var tone;
+    var lineStroke;
+
+    function preload() {
+      tone = loadSound('tone.wav');
+    }
+
+
+    function setup() {
+        createCanvas(windowWidth, windowHeight);
+        colorMode(HSL);
+
+
+        for (var i = 0; i < 2; i++) {
+            var ball = {
+                x: random(10, width - 25),
+                y: random(10, height - 25),
+                changeInX: random(1,6)*random([-1,1]),
+                changeInY: random(1,6)*random([-1,1]),
+                h: random(360),
+                s: random(50,80),
+            };
+            balls.push(ball);
+        }
+    }
+
+    function draw() {
+
+        background(220);
+
+        for (var i = 0; i < balls.length; i++){
+            var ball = balls[i];
+            noStroke();
+            fill(ball.h, ball.s, 70);
+            ellipse(ball.x, ball.y, 40);
+
+            ball.x += ball.changeInX;
+            ball.y += ball.changeInY;
+
+            if (ball.x > width - 20) {
+                ball.changeInX *= -1;
+                tone.play();
+            }
+
+            if (ball.y > height - 20) {
+                ball.changeInY *= -1;
+                tone.play();
+            }
+
+            if (ball.x < 20) {
+                ball.changeInX *= -1;
+                tone.play();
+            }
+
+            if (ball.y < 20) {
+                ball.changeInY *= -1;
+                tone.play();
+            }
+
+        }
+
+        // for (var i = 0; i < 500; i + 100){
+        fill(0)
+        rect(100, 0, 100, 100);
+        // }
+
+        var lineX2 = mouseX
+        var lineY2 = mouseY
+
+        if (mouseIsPressed){
+            if (abs(mousePos[0] - mouseX) < 50 && abs(mousePos[1] - mouseY) < 50){
+                lineStroke = 90;
+            }
+            else {
+                lineStroke = 0;
+            }
+            if (abs(mousePos[0] - mouseX) > 300 || abs(mousePos[1] - mouseY) > 300){
+                // I want to make an imaginary circle where you can no longer extend the line. not sure how to do this.
+                // lineX2 = mousePos[0]+300;
+                // lineY2 = mousePos[1]+300;
+            }
+            press ++;
+            strokeWeight(4);
+            stroke(lineStroke);
+            line(mousePos[0], mousePos[1], lineX2, lineY2);
+        }
+    }
+
+    function mouseClicked(){
+        if (abs(mousePos[0] - mouseX) <= 5 && abs(mousePos[1] - mouseY) <= 5){
+
+            for (var i = 0; i < 10; i++) {
+                var mBall = {
+                    x: mouseX,
+                    y: mouseY,
+                    changeInX: random(1,6)*random([-1,1]),
+                    changeInY: random(1,6)*random([-1,1]),
+                    h: random(360),
+                    s: random(50,80),
+                };
+            balls.push(mBall);
+        }
+
+        }
+        else if (abs(mousePos[0] - mouseX) < 50 && abs(mousePos[1] - mouseY) < 50){
+
+        }
+        else {
+            var ball = {
+                x: mouseX,
+                y: mouseY,
+                changeInX: (mousePos[0] - mouseX)/12,
+                changeInY: (mousePos[1]- mouseY)/12,
+                h: random(360),
+                s: random(50,80),
+            };
+            balls.push(ball);
+        }
+        press = 0;
+    }
+    function mousePressed(){
+        mousePos = [];
+        mousePos.push(mouseX);
+        mousePos.push(mouseY);
+    }
+
+    </script>
+</body>
+</html>
